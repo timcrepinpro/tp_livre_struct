@@ -1,72 +1,61 @@
 using System;
 using System.Collections.Generic;
 
-struct Livre
+class Livre
 {
-    public string Titre;
-    public string Auteur;
-    public int Annee;
-    public int Pages;
-    public bool EstDisponible;
+    // Propriétés
+    public string Titre { get; set; }
+    public string Auteur { get; set; }
+    public int Annee { get; set; }
+    public int Pages { get; set; }
+    public bool EstDisponible { get; set; }
+
+    // Constructeur
+    public Livre(string titre, string auteur, int annee, int pages, bool estDisponible)
+    {
+        Titre = titre;
+        Auteur = auteur;
+        Annee = annee;
+        Pages = pages;
+        EstDisponible = estDisponible;
+    }
 }
 
-class Program
+class Bibliotheque
 {
-    static void Main()
+    private List<Livre> livres;
+
+    public Bibliotheque()
     {
-        
-        Livre livre1 = new Livre
-        {
-            Titre = "Mon quotidien le cyberharcèlement",
-            Auteur = "Jonathan Zablot",
-            Annee = 2020,
-            Pages = 130,
-            EstDisponible = true
-        };
+        livres = new List<Livre>();
+    }
 
-        Livre livre2 = new Livre
-        {
-            Titre = "30 ans de gaming",
-            Auteur = "Jonathan Zablot",
-            Annee = 2023,
-            Pages = 150,
-            EstDisponible = true
-        };
+    public void AjouterLivre(Livre livre)
+    {
+        livres.Add(livre);
+    }
 
-        Livre livre3 = new Livre
-        {
-            Titre = "The legend of zelda - souvenir d'enfance",
-            Auteur = "Matthieu Meriot",
-            Annee = 2020,
-            Pages = 120,
-            EstDisponible = true
-        };
-
-    
-        Console.WriteLine("=== Partie 1 : Affichage des 3 livres ===");
-        AfficherLivre(livre1);
-        AfficherLivre(livre2);
-        AfficherLivre(livre3);
-
-        
-        List<Livre> bibliotheque = new List<Livre> { livre1, livre2, livre3 };
-
-        Console.WriteLine("\n=== Partie 2 : Liste de la bibliothèque ===");
-        foreach (var livre in bibliotheque)
+    public void AfficherTousLesLivres()
+    {
+        foreach (var livre in livres)
         {
             AfficherLivre(livre);
         }
+    }
 
-        Console.WriteLine("\n=== Partie 3 : Livres disponibles ===");
-        foreach (var livre in bibliotheque)
+    public void AfficherLivresDisponibles()
+    {
+        foreach (var livre in livres)
         {
             if (livre.EstDisponible)
                 AfficherLivre(livre);
         }
+    }
 
-        Console.WriteLine("\n=== Partie 3 : Livres de plus de 300 pages ===");
+    public void AfficherLivresPlusDe300Pages()
+    {
         bool aucunLivre300 = true;
-        foreach (var livre in bibliotheque)
+        foreach (var livre in livres)
         {
             if (livre.Pages > 300)
             {
@@ -76,76 +65,88 @@ class Program
         }
         if (aucunLivre300)
             Console.WriteLine("Aucun livre de plus de 300 pages.");
+    }
 
-        Console.WriteLine("\n=== Partie 3 : Livres publiés après 2000 ===");
-        foreach (var livre in bibliotheque)
+    public void AfficherLivresPubliesApres2000()
+    {
+        foreach (var livre in livres)
         {
             if (livre.Annee > 2000)
                 AfficherLivre(livre);
         }
+    }
 
-        int totalPages = 0;
-        int livresDisponibles = 0;
-        foreach (var livre in bibliotheque)
+    public int CalculerTotalPages()
+    {
+        int total = 0;
+        foreach (var livre in livres)
         {
-            totalPages += livre.Pages;
+            total += livre.Pages;
+        }
+        return total;
+    }
+
+    public int CompterLivresDisponibles()
+    {
+        int compte = 1;
+        foreach (var livre in livres)
+        {
             if (livre.EstDisponible)
-                livresDisponibles++;
+                compte++;
         }
-        Console.WriteLine($"\n=== Partie 4 : Nombre total de pages : {totalPages} ===");
-        Console.WriteLine($"Nombre de livres disponibles : {livresDisponibles}");
+        return compte;
+    }
 
-        
-        Console.WriteLine("\n=== Partie 5 : Recherche par titre ===");
-        Console.Write("Entrez un titre à rechercher : ");
-        string titreRecherche = Console.ReadLine();
-        bool trouve = false;
-        foreach (var livre in bibliotheque)
+    public Livre RechercherParTitre(string titre)
+    {
+        foreach (var livre in livres)
         {
-            if (livre.Titre.Equals(titreRecherche, StringComparison.OrdinalIgnoreCase))
-            {
-                AfficherLivre(livre);
-                trouve = true;
-                break;
-            }
+            if (livre.Titre.Equals(titre, StringComparison.OrdinalIgnoreCase))
+                return livre;
         }
-        if (!trouve)
-            Console.WriteLine("Livre introuvable.");
+        return null;
+    }
 
-      
-        Console.WriteLine("\n=== Partie 6 : Emprunt ===");
-        Console.Write("Quel titre voulez-vous emprunter ? ");
-        string titreEmprunt = Console.ReadLine();
-        bool empruntReussi = false;
-        for (int i = 0; i < bibliotheque.Count; i++)
+    class Bibliotheque
+    {
+        private List<Livre> livres;
+
+        public Bibliotheque()
         {
-            if (bibliotheque[i].Titre.Equals(titreEmprunt, StringComparison.OrdinalIgnoreCase))
+            livres = new List<Livre>();
+        }
+
+    
+
+        public int NbrLivre()
+        {
+          return livres.Count;
+       }
+    }
+
+
+
+    public bool EmprunterLivre(string titre)
+    {
+        for (int i = 0; i < livres.Count; i++)
+        {
+            if (livres[i].Titre.Equals(titre, StringComparison.OrdinalIgnoreCase))
             {
-                if (bibliotheque[i].EstDisponible)
+                if (livres[i].EstDisponible)
                 {
-                    bibliotheque[i] = new Livre
-                    {
-                        Titre = bibliotheque[i].Titre,
-                        Auteur = bibliotheque[i].Auteur,
-                        Annee = bibliotheque[i].Annee,
-                        Pages = bibliotheque[i].Pages,
-                        EstDisponible = false
-                    };
-                    Console.WriteLine("Emprunt validé.");
+                    livres[i] = new Livre(livres[i].Titre, livres[i].Auteur, livres[i].Annee, livres[i].Pages, false);
+                    return true;
                 }
                 else
                 {
-                    Console.WriteLine("Emprunt impossible : livre déjà emprunté.");
+                    return false;
                 }
-                empruntReussi = true;
-                break;
             }
         }
-        if (!empruntReussi)
-            Console.WriteLine("Emprunt impossible : livre introuvable.");
+        return false;
     }
 
-    static void AfficherLivre(Livre livre)
+    private void AfficherLivre(Livre livre)
     {
         Console.WriteLine($"Titre : {livre.Titre}");
         Console.WriteLine($"Auteur : {livre.Auteur}");
@@ -156,3 +157,57 @@ class Program
     }
 }
 
+class Program
+{
+    static void Main(string[] args)
+    {
+        Bibliotheque maBibliotheque = new Bibliotheque();
+
+        Livre livre1 = new Livre("Mon quotidien le cyberharcèlement", "Jonathan Zablot", 2020, 130, true);
+        Livre livre2 = new Livre("30 ans de gaming", "Jonathan Zablot", 2023, 150, true);
+        Livre livre3 = new Livre("The legend of zelda - souvenir d'enfance", "Matthieu Meriot", 2020, 120, true);
+        Livre livre4 = new Livre("frigiel et fluffy", "frigiel", 1954, 1178, true);
+
+        maBibliotheque.AjouterLivre(livre1);
+        maBibliotheque.AjouterLivre(livre2);
+        maBibliotheque.AjouterLivre(livre3);
+        maBibliotheque.AjouterLivre(livre4);
+        Console.WriteLine($"=== Partie 1 : Affichage des {maBibliotheque.NbrLivre()} livres ===");
+        maBibliotheque.AfficherTousLesLivres();
+
+        Console.WriteLine("\n=== Partie 2 : Liste de la bibliothèque ===");
+        maBibliotheque.AfficherTousLesLivres();
+
+        Console.WriteLine("\n=== Partie 3 : Livres disponibles ===");
+        maBibliotheque.AfficherLivresDisponibles();
+
+        Console.WriteLine("\n=== Partie 3 : Livres de plus de 300 pages ===");
+        maBibliotheque.AfficherLivresPlusDe300Pages();
+
+        Console.WriteLine("\n=== Partie 3 : Livres publiés après 2000 ===");
+        maBibliotheque.AfficherLivresPubliesApres2000();
+
+        Console.WriteLine($"\n=== Partie 4 : Nombre total de pages : {maBibliotheque.CalculerTotalPages()} ===");
+        Console.WriteLine($"Nombre de livres disponibles : {maBibliotheque.CompterLivresDisponibles()}");
+        
+
+        Console.WriteLine("\n=== Partie 5 : Recherche par titre ===");
+        Console.Write("Entrez un titre à rechercher : ");
+
+        string titreRecherche = Console.ReadLine();
+        Livre livreTrouve = maBibliotheque.RechercherParTitre(titreRecherche);
+        if (livreTrouve != null)
+            maBibliotheque.AfficherLivre(livreTrouve);
+        else
+            Console.WriteLine("Livre introuvable.");
+
+        Console.WriteLine("\n=== Partie 6 : Emprunt ===");
+        Console.Write("Quel titre voulez-vous emprunter ? ");
+        string titreEmprunt = Console.ReadLine();
+        bool empruntReussi = maBibliotheque.EmprunterLivre(titreEmprunt);
+        if (empruntReussi)
+            Console.WriteLine("Emprunt validé.");
+        else
+            Console.WriteLine("Emprunt impossible : livre déjà emprunté ou introuvable.");
+    }
+}
